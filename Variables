@@ -1,0 +1,207 @@
+import pygame
+import random
+import math
+
+#game states
+START = 0
+FISHING = 1
+AQUARIUM = 2
+SETTINGS = 3
+MENU = 4
+INVENTORY = 5
+BAGPASS = 0
+TextTime = 0
+LinePower = 0
+game_state = START
+
+pygame.init()
+font = pygame.font.SysFont("comicsansms", 16)
+text1 = font.render("start screen. press p to play.", True, (0, 228, 0))
+text2 = font.render("Fish caught!", True, (255, 0, 0))
+text3 = font.render("Main Menu", True, (255,255,255))
+text4 = font.render("Inventory placeholder", True, (0,0,0))
+text5 = font.render("Press M to open the menu.", True, (0,0,0))
+text6 = font.render("Press A to check your aquarium, P to go back to fishing, and S to open the settings menu.", True, (0,0,0))
+gamescreen = pygame.display.set_mode((700,500))
+pygame.display.set_caption("Fishing Frenzy")
+clocky = pygame.time.Clock()
+PlayingGame = True
+
+bagArray = [0,0,0,0,0,0,0,0,0]
+bagCount = 9
+#slot 0 is minnow, 1 is jellyfish, etc
+
+
+
+class minnow:
+    def __init__(self):
+        self.xpos = random.randrange(0, 700)
+        self.ypos = random.randrange(100, 450)
+        self.Vx = random.randrange(-3, 3)
+        self.Vy = random.randrange(-3, 3)
+        self.ticker = random.randrange(0,100)
+        self.red = random.randrange(0,100)
+        self.green = random.randrange(100,250)
+        self.blue = random.randrange(50, 200)
+        self.onHook = False
+        self.caught = False
+        
+    def move(self, x, y):
+       
+       #follow end of wire if on hook
+        if self.onHook == True:
+            self.xpos = rx
+            self.ypos = ry
+            print(self.ypos)
+            if self.ypos <= 100 and self.onHook == True: #if fish gets to top
+                self.caught = True
+                self.onHook = False
+
+        
+        #floppy floppy if caught
+        if self.caught == True and self.xpos !=-50:
+          print("FISH GOT")
+          TextTime = 100
+
+          self.ypos = -50
+          self.xpos = -50
+          bagArray[0] +=1
+          
+          #if game_state == INVENTORY:
+           #   if bagArray[BAGPASS] == "Minnow":
+            #    self.ypos = i*50
+             #   self.xpos = i*50
+              #  i + 1
+       
+            #self.ticker+=1
+            #self.Vy+=.3
+            #if self.xpos>680:
+             #   self.xpos = 680
+              #  self.Vx*=-1
+           # if self.xpos<0:
+            #    self.xpos = 0
+             #   self.Vx*=-1
+           # if self.ypos>85:
+            #    self.ypos = 85
+             #   self.Vy*=-1
+           # if self.ypos<0:
+            #    self.ypos = 0
+             #   self.Vy*=-1
+           # if self.ticker > 50:
+            #    self.Vx = random.randrange(-2, 3)
+             #   self.Vy = random.randrange(-2, 3)
+              #  self.ticker = 0
+           # self.xpos+=self.Vx
+           # self.ypos+=self.Vy   
+                
+        
+        #fish in water algorithm
+        if self.caught == False:
+            self.ticker+=1
+            if self.xpos>680:
+                self.xpos = 680
+                self.Vx*=-1
+            if self.xpos<100:
+                self.xpos = 100
+                self.Vx*=-1
+            if self.ypos<100:
+                self.ypos = 100
+                self.Vy*=-1
+            if self.ypos>500:
+                self.ypos = 500
+                self.Vy*=-1
+            if self.ticker > 200:
+                self.Vx = random.randrange(-2, 3)
+                self.Vy = random.randrange(-2, 3)
+                self.ticker = 0
+            self.xpos+=self.Vx
+            self.ypos+=self.Vy
+        
+    def draw(self):
+        pygame.draw.ellipse(gamescreen, (self.red, self.green, self.blue), (self.xpos, self.ypos, 25, 15))
+        if self.Vx < 0:
+            pygame.draw.polygon(gamescreen, (self.red, self.green, self.blue), ((self.xpos+30, self.ypos-5), (self.xpos+30, self.ypos+15), (self.xpos+20, self.ypos+5)))
+            pygame.draw.circle(gamescreen, (0,0,0), (self.xpos+5, self.ypos+5), 3)
+        else:
+            pygame.draw.polygon(gamescreen, (self.red, self.green, self.blue), ((self.xpos-5, self.ypos-5), (self.xpos-5, self.ypos+15), (self.xpos+5, self.ypos+5)))
+            pygame.draw.circle(gamescreen, (0,0,0), (self.xpos+20, self.ypos+5), 3)
+    
+class jelly:
+    def __init__(self):
+        self.xpos = random.randrange(0, 700)
+        self.ypos = random.randrange(100, 450)
+        self.Vx = random.randrange(-3, 3)
+        self.Vy = random.randrange(-3, 3)
+        self.ticker = random.randrange(0,100)
+        self.red = random.randrange(50,250)
+        self.green = random.randrange(0,50)
+        self.blue = random.randrange(0, 200)
+        self.onHook = False
+        self.caught = False
+    def move(self, x, y):
+        if self.onHook == True:
+            self.xpos = rx
+            self.ypos = ry
+            print(self.ypos)
+            if self.ypos <= 100 and self.onHook == True: #if fish gets to top
+                self.caught = True
+                self.onHook = False
+        if self.caught == True and self.xpos !=-50:
+          print("JELLY GOT")
+          TextTime = 100
+
+          self.ypos = -50
+          self.xpos = -50
+          bagArray[1] += 1
+        
+          
+
+        if self.caught == False:
+            self.ticker+=1
+            if self.xpos>680:
+                self.xpos = 680
+                self.Vx*=-1
+            if self.xpos<100:
+                self.xpos = 100
+                self.Vx*=-1
+            if self.ypos<100:
+                self.ypos = 100
+                self.Vy*=-1
+            if self.ypos>500:
+                self.ypos = 500
+                self.Vy*=-1
+            if self.ticker > 200:
+                self.Vx = random.randrange(-2, 2)
+                self.Vy = random.randrange(-2, 4)
+                self.ticker = 0
+            self.xpos+=self.Vx
+            self.ypos+=self.Vy
+
+    def draw(self):
+        pygame.draw.ellipse(gamescreen, (self.red, self.green, self.blue), (self.xpos, self.ypos, 25, 25))
+        pygame.draw.rect(gamescreen, (self.red,self.green,self.blue),(self.xpos,self.ypos+17,3,10))
+        pygame.draw.rect(gamescreen, (self.red,self.green,self.blue),(self.xpos+5,self.ypos+20,3,10))
+        pygame.draw.rect(gamescreen, (self.red,self.green,self.blue),(self.xpos+10,self.ypos+23,3,10))
+        pygame.draw.rect(gamescreen, (self.red,self.green,self.blue),(self.xpos+15,self.ypos+23,3,10))
+        pygame.draw.rect(gamescreen, (self.red,self.green,self.blue),(self.xpos+20,self.ypos+20,3,10))
+       
+
+#f1 = fish()
+#f2 = fish()
+#f3 = fish()
+school = list()
+for i in range (20):
+    school.append(minnow())
+    
+sandwich = list()
+for j in range (10):
+    sandwich.append(jelly())
+
+
+xpos = 50
+ypos = 75
+vx=0
+rx=0
+ry = 0
+cast = False
+hole = False
